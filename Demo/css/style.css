@@ -8,14 +8,29 @@ body{
 	line-height:18px;
 }
 
+ul{
+	list-style:none;
+	margin:0px;
+	padding:0px;
+}
+
 input, select{
 
 	border-radius:5px;
-	padding:8px 10px;
+	padding:8px 14px;
 	font-size:14px;
 	color:#666;
 	border: 1px solid #ccc;
 	width: 90%;
+	
+}
+
+h1,h2,h3,h4,h5,h6{
+
+	width:100%;
+	color:#fff;
+	margin: 15px;
+	font-weight:normal;
 	
 }
 
@@ -37,18 +52,8 @@ a{
 	
 }
 
-.header{
-	padding:12px 0;
-	height:26px;
-	box-shadow:0px 0px 8px #333;
-	position:fixed;
-	width:100%;
-	display:block;
-	background-color: #fff;
-	top:0px;
-	z-index:100;
-	
-}
+
+
 
 
 /*  end HTML tags */
@@ -116,6 +121,12 @@ a{
 
 .product-price-now{
 	margin:0 15px;
+}
+
+.product-price{
+	color: #fc9538;
+	font-size:18px;
+	font-weight:bold;
 }
 
 .product-title{
@@ -233,13 +244,41 @@ a{
 	text-align: center;
 	font-size:15px;
 	color:#fff;	
-	border-radius: 5px;
-	width:100%;
-	padding: 10px 15px;
+	border-radius: 5px;	
+	padding: 10px 0;
 	background-color: #54c096;
 	text-transform:uppercase;
 	display: block;
 	
+}
+
+
+.btn-board{
+	text-align: center;
+	font-size:15px;
+	color: #54c096;
+	border: 1px solid	#ddd;
+	border-radius: 10px;
+	width:38%;
+	padding: 10px 5px 5px;
+	background-color: #fff;
+	position:fixed;
+	bottom: 60px;
+	height:40px;
+	line-height:40px;
+}
+
+.btn-board-col{
+	width:38%;
+	padding: 10px 5px 5px;
+	background-color: #fff;
+	border: 1px solid	#ddd;
+	position:fixed;
+	bottom: 30px;
+	height:15px;
+	width:1px;
+	left:90px;
+
 }
 
 
@@ -270,6 +309,12 @@ a{
 	
 	float: left;	
 		
+}
+
+.payment-form li{
+
+	height:70px;
+	
 }
 
 .quantity-col {
@@ -341,25 +386,130 @@ a{
 
 }
 
-.payment-form li{
-
-	height:72px;
-}
 
 .card-number-col{
 	width:100%;
 }
 
 .buy-now-col {
-	width:88%;
+	width:100%;
 }
 
 
 /* end payment */
 
 
+/* start list product*/
 
-/* start elements */
+.product-photo-col{
+	width:120px;
+	padding-top: 10px;
+	
+}
+
+
+.product-info-col{
+	width:50%;
+	margin-left: 15px;
+	padding-top: 25px;
+}
+
+
+/* end list product*/
+
+
+/* start layout and elements */
+
+.shout-box{
+	
+	margin:15px;	
+	background-color: #fff;
+	width:auto;
+	height:100%;
+}
+
+.shout-box-mask-top{
+	height: 30px;
+	background-color: #fff;
+	position:fixed;
+	top: 0px;
+	width:100%;
+}
+
+.shout-box-mask-bottom{
+	height: 160px;
+	background-color: #fff;
+	position:fixed;
+	bottom: 0px;
+	width:100%;
+}
+
+
+.shout-box-header{
+	border-radius: 10px 10px 0 0;
+	height: 100px;
+	background-color: #54c096;
+	padding:5px 0 15px;
+	position:fixed;
+	top: 15px;
+	width:92%;
+}
+
+.shout-box-footer{
+	border-radius:0 0 10px 10px;
+	height: 0px;
+	background-color: #54c096;
+	padding:15px 0 0px;
+	position:fixed;
+	bottom: 145px;
+	width:92%;
+	
+}
+
+.shout-box-arrow{
+	position:fixed;
+	width:20px;
+	height: 20px;
+	-ms-transform: rotate(-45deg); /* IE 9 */
+    -webkit-transform: rotate(-45deg); /* Chrome, Safari, Opera */
+    transform: rotate(-45deg);
+	background-color:#fff;
+	right:20%;
+	bottom: 135px;
+	background-color: #54c096;
+}
+
+
+.shout-box-body{
+	margin-top: 140px;
+
+
+}
+
+.mozo-icon{
+	position:fixed;
+	width:130px;
+	height: 95px;
+	background: url('../img/graphics/buddy_promo.png') center center no-repeat;
+	display:block;	
+	bottom: 20px;
+	right:20px;
+}
+
+
+.header{
+	padding:12px 0;
+	height:26px;
+	box-shadow:0px 0px 8px #333;
+	position:fixed;
+	width:100%;
+	display:block;
+	background-color: #fff;
+	top:0px;
+	z-index:100;
+	
+}
+
 
 .card{
 	margin: 0 auto;
@@ -403,4 +553,4 @@ a{
 	top:0px;
 }
 
-/* end elements */
+/* end layout and elements */

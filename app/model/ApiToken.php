@@ -16,5 +16,15 @@ class ApiToken extends Model {
         return 'api_token';
     }
 
+
+    public function beforeValidationOnCreate()
+    {
+        $this->date_created = new \Phalcon\Db\RawValue('NOW()');
+    }
+    
+    public function beforeValidationOnUpdate()
+    {
+    }
+
     public function validation () {}
 }

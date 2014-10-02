@@ -19,30 +19,31 @@ function encryptBase64AES ($data, $token) {
 }
 
 function getToken () {
-    $sessionId = 'sessionId';
-    $client = 'c4ca4238a0b923820dcc509a6f75849b';
-    $priKey = file_get_contents(__DIR__ . '/key/key.pem');
+    $sessionId  = 'sessionId';
+    $client     = 'c4ca4238a0b923820dcc509a6f75849b';
+    $priKey     = file_get_contents(__DIR__ . '/key/key.pem');
     $passphrase = file_get_contents(__DIR__ . '/key/passphrase');
-    $token = encryptBase64RSAByPriKey($sessionId, $priKey, $passphrase);
+    $token      = encryptBase64RSAByPriKey($sessionId, $priKey, $passphrase);
 
     // var_dump($token);die;
 
-    $url = 'http://localhost/projects/api/api/token?client=' . $client;
+    $url = 'http://payment.api/api/token?client=' . $client;
     $data = array(
-            'data' => $token
+        'data' => $token
     );
 
     // use key 'http' even if you send the request to https://...
     $options = array(
-            'http' => array(
-                    'header' => "Content-type: application/x-www-form-urlencoded\r\n",
-                    'method' => 'POST',
-                    'content' => http_build_query($data)
-            )
+        'http' => array(
+            'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+            'method'  => 'POST',
+            'content' => http_build_query($data)
+        )
     );
+
     // var_dump($options);die;
     $context = stream_context_create($options);
-    $result = file_get_contents($url, false, $context);
+    $result  = file_get_contents($url, false, $context);
 
     // execute post
     // var_dump($result);die;
@@ -52,33 +53,35 @@ function getToken () {
 
 function payment ($token) {
     $cardInfo = array(
-            'buyerId' => 1111,
-            'clientTransactionId' => sha1(uniqid(rand(), 1)),
-            'currency' => 'VND',
-            'amount' => $_POST['amount'],
-            'cardType' => 'VISA',
-            'cardName' => $_POST['cardName'],
-            'cardNumber' => $_POST['cardNumber'],
-            'cvv' => $_POST['cvv'],
-            'validThrough' => $_POST['validThr']
+        'buyerId'      => 142,
+        'clientTransactionId' => sha1(uniqid(rand(), 1)),
+        'currency'     => 'USD',
+        'gateway'      => 'paypal',
+        'amount'       => $_POST['amount'],
+        'cardType'     => $_POST['cardType'],
+        'cardName'     => $_POST['cardName'],
+        'cardNumber'   => $_POST['cardNumber'],
+        'cvv'          => $_POST['cvv'],
+        'validThrough' => $_POST['validThrough'],
+        'description'  => 'Buy ' . $_POST['quantity'] . ' Most Wanted Coats',
     );
     $cardInfo = json_encode($cardInfo);
     $cardInfo = encryptBase64AES($cardInfo, $token);
 
     // var_dump($token);die;
 
-    $url = 'http://localhost/projects/api/api/payment?token=' . $token;
+    $url = 'http://payment.api/api/payment?token=' . $token;
     $data = array(
             'data' => $cardInfo
     );
 
     // use key 'http' even if you send the request to https://...
     $options = array(
-            'http' => array(
-                    'header' => "Content-type: application/x-www-form-urlencoded\r\n",
-                    'method' => 'POST',
-                    'content' => http_build_query($data)
-            )
+        'http' => array(
+            'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+            'method' => 'POST',
+            'content' => http_build_query($data)
+        )
     );
     // var_dump($options);die;
     $context = stream_context_create($options);
@@ -90,8 +93,14 @@ function payment ($token) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $token = getToken();
-    // echo $token;
+    
     $payment = payment($token);
+
+    if ($payment != '') {
+    	$payment = json_decode($payment, true);
+    	if ($payment['transactionId']) header('Location: completed.php');
+    }
+
     var_dump($payment);
     die();
     // var_dump($token);die;
@@ -194,14 +203,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 		</div>
 	</div>
-    <form method="post" action=".">
+
+
+    <form method="post" action="" id="credit-card-form">
 		<div class="payment-slide hide">
 			<div class="card">
 				<ul>
-					<li class="quantity-col "><label>Qty</label><br /> <select id="quantity">
-							<option value="1">1</option>
+					<li class="quantity-col "><label>Qty</label><br />
+						<select id="quantity" name="quantity">
+							<option value="1" selected>1</option>
 							<option value="2">2</option>
-							<option value="3" selected>3</option>
+							<option value="3">3</option>
 							<option value="4">4</option>
 							<option value="5">5</option>
 							<option value="6">6</option>
@@ -222,7 +234,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 					<li class="total-col "><label>Total</label><br />
     					<input name="amount" id="amount" type="hidden" value="50" />
-    					<span id="amountDesc">$150</span>
+    					<span id="amountDesc">$50</span>
 					</li>
 				</ul>
 
@@ -231,23 +243,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				<hr>
 
 				<ul>
-
 					<li class="payment-title-col">Payment info</li>
-					<li class="credit-card-col"><img src="img/graphics/credit-card.jpg"
-						alt=""></li>
-
-
+					<li class="credit-card-col"><img src="img/graphics/credit-card.jpg" alt=""></li>
 				</ul>
 
 				<div class="clear"></div>
 
 				<ul class="payment-form">
-
-					<li class="card-number-col "><label>Card number</label><br /> <input
-						type="text" id="cardNumber" name="cardNumber" value=""></li>
+					<li class="card-number-col ">
+						<label>Card number</label><br />
+						<input type="text" id="cardNumber" name="cardNumber" value="">
+					</li>
 
 					<li class="month-col"><label>Expiration date</label><br /> <select
-						id="validThr1">
+						id="validThrough1">
 							<option value="01" selected>01</option>
 							<option value="02">02</option>
 							<option value="03">03</option>
@@ -262,65 +271,83 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 							<option value="12">12</option>
 					</select></li>
 
-					<li class="year-col"><label></label><br /> <select id="validThr2">
+					<li class="year-col"><label></label><br />
+						<select id="validThrough2">
 							<option value="2014" selected>2014</option>
 							<option value="2015">2015</option>
 							<option value="2016">2016</option>
+						</select>
+					</li>
 
-					</select> <input type="hidden" name="validThr" id="validThr" /></li>
-					<li class="code-col "><label>CVV code</label><br /> <input
-						type="text" name="cvv"></li>
+					<li class="code-col">
+						<label>CVV code</label><br />
+						<input type="text" name="cvv" id="cvv" maxlength="3">
+					</li>
 
-					<li class="card-number-col "><label>Name as it appears on card</label><br />
-						<input type="text" name="cardName" value=""></li>
+					<li class="card-number-col ">
+						<label>Name as it appears on card</label><br />
+						<input type="text" name="cardName" value="" id="cardName">
+					</li>
 
 
-					<li class="buy-now-col "><input type="submit" alt="" title=""
-						class="btn-large-buy disabled" value="Buy now" /></li>
+					<input type="hidden" name="validThrough" id="validThrough" value="01-2014" />
+					<input type="hidden" name="cardType" id="cardType" value="" />
 
+					<li class="buy-now-col ">
+						<input id="credit-card-form-buy-button" type="submit" alt="" title="" class="btn-large-buy disabled" value="Buy now" />
+					</li>
 				</ul>
-
-
 			</div>
-
-
 		</div>
 	</form>
 
 	<div class="clear"></div>
 
-	<script
-		src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script>
+
+
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script>
+	var isQuantityValid   = true,
+	    isCardNumberValid = false,
+	    isCardTypeValid   = false,
+	    isValidThroughValid = false,
+	    isCvvValid        = false,
+	    isCardNameValid   = false;
 
 	function getCardType(number){
-// 		number = "4556665";
-		result = number.match(/^4[0-9]{6,}$/gi);
-	    if(result && result.length > 0){
-	        return 'Visa';
-	    }
+		if (number != '') {
+			result = number.match(/^4[0-9]{6,}$/gi);
+		    if(result && result.length > 0){
+		        return 'Visa';
+		    }
 
-	    result = number.match(/^5[1-5][0-9]{5,}$/gi);
-	    if(result && result.length > 0){
-	        return 'Master';
-	    }
+		    result = number.match(/^5[1-5][0-9]{5,}$/gi);
+		    if(result && result.length > 0){
+		        return 'Master';
+		    }
 
-	    return 'Union';
-
+		    return 'Union';
+		}
 	}
 
-    </script>
-	<script>
-
 	$("#quantity").change(function(){
-        price = $("#price").val();
+        price    = $("#price").val();
         quantity = $(this).val();
+
         $("#amount").val(quantity*price);
         $("#amountDesc").text("$" + $("#amount").val());
+
+        isValidCardInfo();
     });
 
 	$("#cardNumber").change(function(){
-	    if(getCardType($(this).val())=='Master'){
+		var cardType = getCardType($(this).val());
+
+	    if (cardType == 'Master') {
 	        $(this).css({
 		        "background": "url(img/master.png)",
 	            "background-position-x": "right",
@@ -329,7 +356,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	        })
 	    }
 
-	    if(getCardType($(this).val())=='Visa'){
+	    if (cardType == 'Visa') {
 	        $(this).css({
 		        "background": "url(img/visa.png)",
 	            "background-position-x": "right",
@@ -337,32 +364,98 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	            "background-size": "20px 10px"
 	        })
 	    }
+
+	    $('#cardType').val(cardType);
+        isValidCardInfo();
 	});
 
-    $("#validThr1, #validThr1").change(function() {
-        $("#validThr").val($("#validThr1").val() + "-" + $("#validThr2").val());
+    $("#validThrough1, #validThrough2").change(function() {
+        $("#validThrough").val($("#validThrough1").val() + "-" + $("#validThrough2").val());
+
+        isValidCardInfo();
+    });
+
+    $("#cvv, #cardName").change(function() {
+        isValidCardInfo();
     });
 
 	$(".btn-buy").click(function(){
-
 		$(".payment-slide").show();
 		$(".bg-fade").css("width","100%");
-
 	});
 
 	$(".bg-fade").click(function(){
-
 		$(".payment-slide").hide();
 		$(".bg-fade").css("width","0%");
-
 	});
 
 	$(".btn-more").click(function(){
-
 		$(".product-detail ").show();
 		$(".btn-more").hide();
-
 	});
+
+	function isValidCardInfo() {
+        price      = $("#price").val();
+        quantity   = $("#quantity").val();
+        cardNumber = $("#cardNumber").val();
+	    cardType   = $('#cardType').val();
+        cardName   = $("#cardName").val();
+        cvv        = $("#cvv").val();
+        validThrough = $("#validThrough").val();
+
+        if (quantity != '') {
+        	isQuantityValid = true;
+        } else {
+        	isQuantityValid = false;
+        }
+        if (cardNumber != '') {
+        	isCardNumberValid = true;
+        } else {
+        	isCardNumberValid = false;
+        }
+        if (cardType != '') {
+        	isCardTypeValid = true;
+        } else {
+        	isCardTypeValid = false;
+        }
+        if (cardName != '') {
+        	isCardNameValid = true;
+        } else {
+        	isCardNameValid = false;
+        }
+        if (cvv != '') {
+        	isCvvValid = true;
+        } else {
+        	isCvvValid = false;
+        }
+        if (validThrough != '') {
+        	isValidThroughValid = true;
+        } else {
+        	isValidThroughValid = false;
+        }
+
+        if (isQuantityValid && isCardNumberValid && isCardTypeValid && isCardNameValid && isCvvValid && isValidThroughValid) {
+			$("#credit-card-form-buy-button").removeClass('disabled');
+        	return true;
+        }
+
+        $("#credit-card-form-buy-button").addClass('disabled');
+        return false;
+	}
+
+	function buyNow() {
+		if (isValidCardInfo()) {
+	        price      = $("#price").val();
+	        quantity   = $("#quantity").val();
+	        cardNumber = $("#cardNumber").val();
+	        cardName   = $("#cardName").val();
+	        cvv        = $("#cvv").val();
+	        validThrough = $("#validThrough").val();
+	        cardType   = $('#cardType').val();
+
+	        $.post()
+		}
+	}
 
 	/* after validate credit card,  $(".btn-large-buy").removeClass("disabled")  */
 </script>

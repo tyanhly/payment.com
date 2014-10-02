@@ -48,7 +48,7 @@ class Payment{
         }
 
         // 7. Check ips allowed
-        if (strpos($_SERVER['REMOTE_ADDR'], $client->ips_allowed) === false) {
+        if ($client->ips_allowed != '' && strpos($_SERVER['REMOTE_ADDR'], $client->ips_allowed) === false) {
             throw new RequestException(RequestException::ERROR_PERMISSION_DENY);
         }
 
@@ -63,27 +63,29 @@ class Payment{
         $decryptedData = Crypto::decryptBase64AES($data,$token);
 
         $cardInfo = new \Base\Entity\CreditCard($decryptedData);
-//         var_dump($cardInfo);die;
+        // print_r($decryptedData);die;
+
 
         // 10. Get Transaction
         $clientSessionId = $decryptedData;
         $paymentTransaction = \PaymentTransaction::findFirst(
-                array(
-                        "conditions" => "client_transaction_id = ?1 AND client_id = ?2",
-                        "bind" => array(
-                                1 => $cardInfo->clientTransactionId,
-                                2 => $client->id
-                        )
-                ));
+            array(
+                "conditions" => "client_transaction_id = ?1 AND client_id = ?2",
+                "bind" => array(
+                    1 => $cardInfo->clientTransactionId,
+                    2 => $client->id
+                )
+            ));
 
 
         // 11. Check transaction existed
         if(!$paymentTransaction){
             $paymentTransaction = new \PaymentTransaction();
             $paymentTransaction->setCreditCard($cardInfo);
-            $paymentTransaction->client_id = $client->id;
-            $paymentTransaction->ip_number = $_SERVER['REMOTE_ADDR'];
-            $paymentTransaction->status    = 'PENDING';
+            $paymentTransaction->client_id  = $client->id;
+            $paymentTransaction->ip_number  = $_SERVER['REMOTE_ADDR'];
+            $paymentTransaction->status     = PAYMENT_STATUS_COMPLETED;
+
 //             var_dump($paymentTransaction);die;
             if ($paymentTransaction->save() === false) {
                 throw new RequestException(RequestException::ERROR_DB_PROBLEM, implode(',', $paymentTransaction->getMessages()));

@@ -26,6 +26,21 @@ class PaymentTransaction extends Model
     }
 
 
+    public function beforeValidationOnCreate()
+    {
+        $this->date_created = new \Phalcon\Db\RawValue('NOW()');
+        $this->card_number  = substr($this->card_number, -4);
+    }
+    
+    public function beforeValidationOnUpdate()
+    {
+    }
+
+    public function afterCreate() {
+        
+    }
+
+
     public function validation ()
     {
 
@@ -40,5 +55,7 @@ class PaymentTransaction extends Model
         $this->card_type        = $creditCard->cardType;
         $this->card_name        = $creditCard->cardName;
         $this->card_number      = $creditCard->cardNumber;
+        $this->gateway_id       = $creditCard->gateway_id;
+        $this->description      = $creditCard->description;
     }
 }

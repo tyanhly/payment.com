@@ -81,6 +81,29 @@ class CreditCard{
         }else{
             throw new RequestException(RequestException::ERROR_PAYMENT_CARDINFO, 'validThrough Error');
         }
+
+        if(isset($jsonDecode->gateway)){
+            $gateway = \PaymentGateway::findFirst(
+                array(
+                    "conditions" => "gateway_key = ?1",
+                    "bind" => array(
+                        1 => $jsonDecode->gateway,
+                    )
+                ));
+
+            if (! $gateway) {
+                throw new RequestException(RequestException::ERROR_DATA_NOT_FOUND);
+            }
+            $this->gateway_id = $gateway->id;
+        }else{
+            throw new RequestException(RequestException::ERROR_PAYMENT_CARDINFO, 'gateway Error');
+        }
+
+        if(isset($jsonDecode->description)){
+            $this->description = $jsonDecode->description;
+        }else{
+            throw new RequestException(RequestException::ERROR_PAYMENT_CARDINFO, 'description Error');
+        }
 //         var_dump($jsonDecode);die;
     }
 }

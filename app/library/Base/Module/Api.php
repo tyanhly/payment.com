@@ -26,7 +26,7 @@ class Api {
                                 1 => $clientCode
                         )
                 ));
-        // var_dump($client);die;
+        // print_r($client->toArray());die;
 
         // 4. Check client
         if (! $client) {
@@ -34,13 +34,13 @@ class Api {
         }
 
         // 5. Check ips allowed
-        if (strpos($_SERVER['REMOTE_ADDR'], $client->ips_allowed) === false) {
+        if ($client->ips_allowed != '' && strpos($_SERVER['REMOTE_ADDR'], $client->ips_allowed) === false) {
             throw new RequestException(RequestException::ERROR_PERMISSION_DENY);
         }
 
         // 6. Decrypt data
         $decryptedData = \Base\Crypto::decryptBase64RSAByPubKey($data,
-                $client->pub_key);
+                $client->public_key);
 
         // 7. Get SessionId
         $clientSessionId = $decryptedData;
@@ -55,7 +55,6 @@ class Api {
 
         // 8. Check token existed
         if (! $token) {
-            $now = new \DateTime();
             $token = new \ApiToken();
 
             $token->client_id = $client->id;
@@ -63,8 +62,9 @@ class Api {
             $token->token = sha1(uniqid(rand(), 1)) . '_' . md5(
                     $clientSessionId);
             $token->lifetime = APP_TOKEN_LIFETIME;
-            $token->date_updated = $now->format('Y-m-d H:i:s');
+            
             if ($token->save() === false) {
+                print_r($token->getMessages());exit;
                 throw new RequestException(RequestException::ERROR_DB_PROBLEM);
             }
         }

@@ -9,9 +9,9 @@ class PaymentClient extends Model {
 
     public $client_name;
 
-    public $pri_key;
+    public $primary_key;
 
-    public $pub_key;
+    public $public_key;
 
     public $passphrase;
 

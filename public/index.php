@@ -14,6 +14,7 @@ $app->before(
 
 try {
     $app->post('/api/token',function  () {
+//         var_dump($_POST);die;die;
         Base\Module\Api::token();
     });
 

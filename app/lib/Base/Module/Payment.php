@@ -63,6 +63,7 @@ class Payment{
         $decryptedData = Crypto::decryptBase64AES($data,$token);
 
         $cardInfo = new \Base\Entity\CreditCard($decryptedData);
+//         var_dump($cardInfo);die;
 
         // 10. Get Transaction
         $clientSessionId = $decryptedData;
@@ -85,7 +86,8 @@ class Payment{
             $paymentTransaction->status    = 'PENDING';
 //             var_dump($paymentTransaction);die;
             if ($paymentTransaction->save() === false) {
-                throw new RequestException(RequestException::ERROR_DB_PROBLEM);
+                throw new RequestException(RequestException::ERROR_DB_PROBLEM, implode(',', $paymentTransaction->getMessages()));
+//                 throw new RequestException(RequestException::ERROR_DB_PROBLEM);
             }
         }else{
             throw new RequestException(RequestException::ERROR_PAYMENT_TRANSACTION_EXISTED);

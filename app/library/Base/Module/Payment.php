@@ -77,12 +77,12 @@ class Payment{
                 )
             ));
 
-
         // 11. Check transaction existed
         if(!$paymentTransaction){
             $paymentTransaction = new \PaymentTransaction();
             $paymentTransaction->setCreditCard($cardInfo);
             $paymentTransaction->client_id  = $client->id;
+            $paymentTransaction->gateway_id  = 1;
             $paymentTransaction->ip_number  = $_SERVER['REMOTE_ADDR'];
             $paymentTransaction->status     = PAYMENT_STATUS_COMPLETED;
 

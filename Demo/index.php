@@ -27,7 +27,7 @@ function getToken () {
 
     // var_dump($token);die;
 
-    $url = 'http://payment.api/api/token?client=' . $client;
+    $url = 'http://api.bl.kiss-concept.com/api/token?client=' . $client;
     $data = array(
         'data' => $token
     );
@@ -56,7 +56,6 @@ function payment ($token) {
         'buyerId'      => 142,
         'clientTransactionId' => sha1(uniqid(rand(), 1)),
         'currency'     => 'USD',
-        'gateway'      => 'paypal',
         'amount'       => $_POST['amount'],
         'cardType'     => $_POST['cardType'],
         'cardName'     => $_POST['cardName'],
@@ -70,7 +69,7 @@ function payment ($token) {
 
     // var_dump($token);die;
 
-    $url = 'http://payment.api/api/payment?token=' . $token;
+    $url = 'http://api.bl.kiss-concept.com/api/payment?token=' . $token;
     $data = array(
             'data' => $cardInfo
     );
@@ -93,12 +92,17 @@ function payment ($token) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $token = getToken();
-    
+
     $payment = payment($token);
 
     if ($payment != '') {
     	$payment = json_decode($payment, true);
     	if ($payment['transactionId']) header('Location: completed.php');
+    	else{
+    	    header('Location: notcompleted.php');
+    	}
+    }else{
+        header('Location: notcompleted.php');
     }
 
     var_dump($payment);
@@ -143,6 +147,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			class="btn-heart"></span></a> <a href="#" title=""
 			class="float-right"><span class="btn-bookmark disabled"></span></a>
 	</div>
+
+
 
 	<div class="content">
 
@@ -294,7 +300,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					<input type="hidden" name="cardType" id="cardType" value="" />
 
 					<li class="buy-now-col ">
-						<input id="credit-card-form-buy-button" type="submit" alt="" title="" class="btn-large-buy disabled" value="Buy now" />
+						<input id="buyButton" type="submit" alt="" title="" class="btn-large-buy disabled" value="Buy now" />
 					</li>
 				</ul>
 			</div>
@@ -341,42 +347,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $("#amount").val(quantity*price);
         $("#amountDesc").text("$" + $("#amount").val());
 
-        isValidCardInfo();
     });
 
-	$("#cardNumber").change(function(){
-		var cardType = getCardType($(this).val());
-
-	    if (cardType == 'Master') {
+	$("#cardNumber").keyup(function(){
+	    if(getCardType($(this).val())=='Master'){
 	        $(this).css({
 		        "background": "url(img/master.png)",
-	            "background-position-x": "right",
+	            "background-position": "right center",
 	            "background-repeat": "no-repeat",
-	            "background-size": "20px 10px"
+	            "background-size": "40px 20px"
 	        })
 	    }
 
-	    if (cardType == 'Visa') {
+	    if(getCardType($(this).val())=='Visa'){
 	        $(this).css({
 		        "background": "url(img/visa.png)",
-	            "background-position-x": "right",
+	            "background-position": "right center",
 	            "background-repeat": "no-repeat",
-	            "background-size": "20px 10px"
+	            "background-size": "40px 20px"
 	        })
 	    }
-
+	    var cardType = getCardType($(this).val());
 	    $('#cardType').val(cardType);
-        isValidCardInfo();
 	});
+
 
     $("#validThrough1, #validThrough2").change(function() {
         $("#validThrough").val($("#validThrough1").val() + "-" + $("#validThrough2").val());
 
-        isValidCardInfo();
     });
 
     $("#cvv, #cardName").change(function() {
-        isValidCardInfo();
     });
 
 	$(".btn-buy").click(function(){
@@ -394,6 +395,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$(".btn-more").hide();
 	});
 
+	$("#quantity, #cardNumber, #validThr1, #validThr2, #cvv, #cardName").keyup(function(){
+	    if(isValidCardInfo()){
+	        $("#buyButton").removeClass("disabled");
+	    }else{
+
+	        $("#buyButton").addClass("disabled");
+	    }
+	});
 	function isValidCardInfo() {
         price      = $("#price").val();
         quantity   = $("#quantity").val();
@@ -435,27 +444,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if (isQuantityValid && isCardNumberValid && isCardTypeValid && isCardNameValid && isCvvValid && isValidThroughValid) {
-			$("#credit-card-form-buy-button").removeClass('disabled');
         	return true;
         }
-
-        $("#credit-card-form-buy-button").addClass('disabled');
         return false;
 	}
 
-	function buyNow() {
+	$("#credit-card-form").submit(function(){
 		if (isValidCardInfo()) {
-	        price      = $("#price").val();
-	        quantity   = $("#quantity").val();
-	        cardNumber = $("#cardNumber").val();
-	        cardName   = $("#cardName").val();
-	        cvv        = $("#cvv").val();
-	        validThrough = $("#validThrough").val();
-	        cardType   = $('#cardType').val();
-
-	        $.post()
+			$(this).submit();
+		}else{
+			return false;
 		}
-	}
+	});
 
 	/* after validate credit card,  $(".btn-large-buy").removeClass("disabled")  */
 </script>

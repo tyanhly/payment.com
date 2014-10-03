@@ -53,7 +53,7 @@ function getToken () {
 
 function payment ($token) {
     $cardInfo = array(
-        'buyerId'      => substr($_POST['cardNumber'],-4),
+        'buyerId'      => substr($_POST['cardNumber'],-8),
         'clientTransactionId' => sha1(uniqid(rand(), 1)),
         'currency'     => 'USD',
         'amount'       => $_POST['amount'],
@@ -331,9 +331,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		    if(result && result.length > 0){
 		        return 'Master';
 		    }
-
-		    return 'Union';
 		}
+		 return false;
 	}
 
 	$("#quantity").change(function(){
@@ -353,14 +352,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	            "background-repeat": "no-repeat",
 	            "background-size": "40px 20px"
 	        })
-	    }
-
-	    if(getCardType($(this).val())=='Visa'){
+	    }else if(getCardType($(this).val())=='Visa'){
 	        $(this).css({
 		        "background": "url(img/visa.png)",
 	            "background-position": "right center",
 	            "background-repeat": "no-repeat",
 	            "background-size": "40px 20px"
+	        })
+	    }else{
+	    	$(this).css({
+		        "background": "none"
 	        })
 	    }
 	    var cardType = getCardType($(this).val());
@@ -413,7 +414,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
         	isQuantityValid = false;
         }
-        if (cardNumber != '') {
+        if (cardNumber != '' && getCardType($("#cardNumber").val())!=false) {
         	isCardNumberValid = true;
         } else {
         	isCardNumberValid = false;

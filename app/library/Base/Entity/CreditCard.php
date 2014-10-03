@@ -13,6 +13,7 @@ class CreditCard{
     public $cardNumber;
     public $cvv;
     public $validThrough;
+    public $description;
 
     public function __construct($json){
         $jsonDecode = json_decode($json);
@@ -85,7 +86,7 @@ class CreditCard{
         if(isset($jsonDecode->description)){
             $this->description = $jsonDecode->description;
         }else{
-            throw new RequestException(RequestException::ERROR_PAYMENT_CARDINFO, 'description Error');
+            throw new RequestException(RequestException::ERROR_PAYMENT_CARDINFO, 'Description Error');
         }
 //         var_dump($jsonDecode);die;
     }

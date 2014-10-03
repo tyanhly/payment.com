@@ -1,5 +1,5 @@
 <?php
-
+// die('dfdf');
 error_reporting(E_ALL);
 
 header("X-Powered-By: " . $_SERVER['HTTP_HOST']);

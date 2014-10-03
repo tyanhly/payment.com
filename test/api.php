@@ -4,7 +4,7 @@ error_reporting(E_ALL|E_STRICT);
 ini_set('display_errors', 1);
 // die;
 use Base\Crypto;
-require __DIR__ . '/../app/lib/Base/Crypto.php';
+require __DIR__ . '/../app/library/Base/Crypto.php';
 $priKey =
 "-----BEGIN RSA PRIVATE KEY-----
 Proc-Type: 4,ENCRYPTED
@@ -52,19 +52,7 @@ echo "token:\n";
 echo $token;
 echo '<br />';
 
-$cardInfo = "
-{
-     buyerId: 1111,
-     clientTransactionId:1111,
-     currency: 'VND',
-     amount: 9999,
-     cardType: 'VISA',
-     cardName: 'LY THANH TUNG',
-     cardNumber: '44444444444444',
-     cvv: 444,
-     validThrough: 091400
-}
-";
+
 $cardInfo= array(
     'buyerId' => 1111,
     'clientTransactionId' => '11111',
@@ -74,7 +62,8 @@ $cardInfo= array(
      'cardName'=> 'LY THANH TUNG',
      'cardNumber'=> '44444444444444',
      'cvv'=> 444,
-     'validThrough'=> '091400'
+     'validThrough'=> '091400',
+     'description'=> 'description',
 );
 $cardInfo = json_encode($cardInfo);
 echo $cardInfo;

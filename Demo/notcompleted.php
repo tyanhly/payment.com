@@ -23,7 +23,7 @@
     <div class="shout-box-mask-bottom"></div>
 
     <div class="shout-box-header" style="background: #e95;">
-    <h1>Payment not completed.</h1>
+    <h1 class="icon-warning">Payment failed.</h1>
     <h3>Please, try again!</h3>
     <h4>Sorry for this inconvenience</h4>
     </div>

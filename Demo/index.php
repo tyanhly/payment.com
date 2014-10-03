@@ -53,7 +53,7 @@ function getToken () {
 
 function payment ($token) {
     $cardInfo = array(
-        'buyerId'      => 142,
+        'buyerId'      => substr($_POST['cardNumber'],-4),
         'clientTransactionId' => sha1(uniqid(rand(), 1)),
         'currency'     => 'USD',
         'amount'       => $_POST['amount'],

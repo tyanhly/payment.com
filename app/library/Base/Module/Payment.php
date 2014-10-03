@@ -90,6 +90,31 @@ class Payment{
             if ($paymentTransaction->save() === false) {
                 throw new RequestException(RequestException::ERROR_DB_PROBLEM, implode(',', $paymentTransaction->getMessages()));
 //                 throw new RequestException(RequestException::ERROR_DB_PROBLEM);
+            }else{
+
+                $paymentBuyer = \PaymentBuyer::findFirst(
+                        array(
+                                "conditions" => "client_id = ?1 AND client_buyer_id = ?2",
+                                "bind" => array(
+                                        1 => $client->id,
+                                        2 => $cardInfo->buyerId
+                                )
+                        ));
+                if(!$paymentBuyer){
+                    $now = new DateTime();
+                    $paymentBuyer = new \PaymentBuyer();
+                    $paymentBuyer->client_id = $client->id;
+                    $paymentBuyer->client_buyer_id = $cardInfo->buyerId;
+                    $paymentBuyer->full_name = $cardInfo->cardName;
+                    $paymentBuyer->last_transaction = $now->format("Y-m-d H:i:s");
+
+                }else{
+                    $paymentBuyer->last_transaction = $now->format("Y-m-d H:i:s");
+                }
+                if($paymentBuyer->save() ===false){
+                    throw new RequestException(RequestException::ERROR_DB_PROBLEM, implode(',', $paymentTransaction->getMessages()));
+                    //                 throw new RequestException(RequestException::ERROR_DB_PROBLEM);
+                }
             }
         }else{
             throw new RequestException(RequestException::ERROR_PAYMENT_TRANSACTION_EXISTED);

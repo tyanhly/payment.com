@@ -54,8 +54,8 @@ echo '<br />';
 
 
 $cardInfo= array(
-    'buyerId' => 1111,
-    'clientTransactionId' => '11111',
+    'buyerId' => 3333,
+    'clientTransactionId' => 'test'.uniqid(rand(),1),
      'currency'=> 'VND',
      'amount'=> 9999,
      'cardType'=> 'VISA',

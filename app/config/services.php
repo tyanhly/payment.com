@@ -31,4 +31,13 @@ $di->set('dbEmailQueue', function () use ($config) {
     ));
 });
 
+$di->set('systemConfig', function() {
+    $configs = array();
+    foreach (SystemConfig::find() as $config) {
+        $configs[$config->key] = $config->value;
+    }
+
+    return $configs;
+});
+
 $app = new \Phalcon\Mvc\Micro($di);

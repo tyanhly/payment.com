@@ -95,6 +95,12 @@ class Payment{
             throw new RequestException(RequestException::ERROR_PAYMENT_TRANSACTION_EXISTED);
         }
 
+        //12. Send email
+        if ($paymentTransaction) {
+            $email = new Email();
+            $email->newPayment($paymentTransaction->id);
+        }
+
 
         // 9. Render json
         \Base\Response::renderJson(array(

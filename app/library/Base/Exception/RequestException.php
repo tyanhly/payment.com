@@ -23,6 +23,7 @@ class RequestException extends \Exception {
     const ERROR_PAYMENT_TRANSACTION_EXISTED     = 0xE002;
     const ERROR_PAYMENT_CURRENCY_NOT_EXISTED    = 0xE003;
 
+    const ERROR_NOT_SERVICE_YET                   = 0xFFFE;
     const ERROR_NOT_CATCH_YET                   = 0xFFFF;
 
     // public function RequestException ($message, $code, $previous){

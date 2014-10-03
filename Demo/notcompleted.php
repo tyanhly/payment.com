@@ -137,7 +137,7 @@
 
     <div class="shout-box-footer" style="background: #e95;"></div>
 
-    <div class="shout-box-arrow"></div>
+    <div class="shout-box-arrow" style="background: #e95;"></div>
 
     <div class="mozo-icon"></div>
 

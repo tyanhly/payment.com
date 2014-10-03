@@ -64,8 +64,7 @@ try {
     });
 
     $app->notFound(function () use ($app) {
-        $app->response->setStatusCode(404, "Not Found")->sendHeaders();
-        echo 'not found!';
+        throw new RequestException(RequestException::ERROR_NOT_SERVICE_YET);
     });
 
     $app->handle();

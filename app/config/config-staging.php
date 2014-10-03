@@ -13,5 +13,6 @@ return new \Phalcon\Config(array(
         'backend'  => 'http://payment.bl.kiss-concept.com',
         'cdn'      => 'http://staging',
         'api'      => 'http://api.bl.kiss-concept.com/',
-    )
+    ),
+    'debugMode'    => 0
 ));

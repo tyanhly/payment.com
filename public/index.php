@@ -71,7 +71,7 @@ try {
     $app->handle();
 }
 catch (RequestException $re) {
-    if(APP_IS_DEBUGING){
+    if($config->debugMode){
         throw $re;
         die;
     }
@@ -82,7 +82,7 @@ catch (RequestException $re) {
             ));
 }
 catch (Exception $e) {
-    if(APP_IS_DEBUGING){
+    if($config->debugMode){
         throw $e;
         die;
     }

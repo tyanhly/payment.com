@@ -72,5 +72,4 @@ define('OPERATION_CREDIT',              'Credit');
 define('OPERATION_BUY',                 'Buy');
 
 
-define('APP_IS_DEBUGING',                1);
 define('APP_TOKEN_LIFETIME',             60*20);

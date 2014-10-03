@@ -55,7 +55,6 @@ class PaymentTransaction extends Model
         $this->card_type        = $creditCard->cardType;
         $this->card_name        = $creditCard->cardName;
         $this->card_number      = $creditCard->cardNumber;
-        $this->gateway_id       = $creditCard->gateway_id;
         $this->description      = $creditCard->description;
     }
 }
